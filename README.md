@@ -8,3 +8,7 @@ let mysql = try VaporMySQL.Provider(host: "localhost", user: "root", password: "
 
 let app = Application(providers: [mysql])
 ```
+
+## Install and Link MySQL
+
+Follow the instructions at [qutheory/mysql](https://github.com/qutheory/mysql) to properly install and link MySQL.

@@ -56,5 +56,5 @@ public final class Provider: Vapor.Provider {
         self.database = driver
     }
 
-    public func boot(with application: Application) { }
+    public func boot(with drop: Droplet) { }
 }

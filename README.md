@@ -4,9 +4,10 @@ Adds MySQL support to the Vapor web framework.
 
 
 ```swift
-let mysql = try VaporMySQL.Provider(host: "localhost", user: "root", password: "", database: "birdwatcher")
+import Vapor
+import VaporMySQL
 
-let app = Application(providers: [mysql])
+let drop = Droplet(providers: [VaporMySQL.self])
 ```
 
 ## Install and link MySQL

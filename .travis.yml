@@ -15,19 +15,19 @@ install:
       sudo apt-get update;
       sudo apt-get install -y mysql-server libmysqlclient-dev;
       sudo mysql_install_db;
-      eval "$(curl -sL https://gist.githubusercontent.com/kylef/5c0475ff02b7c7671d2a/raw/02090c7ede5a637b76e6df1710e83cd0bbe7dcdf/swiftenv-install.sh)";
     fi
   - mysql -u root --password="" -e 'create database test;'
+  - eval "$(curl -sL swift.qutheory.io/travis)"
 script:
-  # Build Vapor MySQL 
+  # Build MySQL 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       swift build -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
       swift build --configuration release -Xswiftc -I/usr/local/include/mysql -Xlinker -L/usr/local/lib;
     fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      swift build;
-      swift build --configuration release;
+      swift build -Xswiftc -DNOJSON;
+      swift build --configuration release -Xswiftc -DNOJSON;
     fi
-  # Test Vapor MySQL
+  # Test MySQL
   - swift test
   

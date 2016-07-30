@@ -1,18 +1,63 @@
 import Vapor
+import Fluent
 import FluentMySQL
 
 public typealias MySQLDriver = FluentMySQL.MySQLDriver
 
 public final class Provider: Vapor.Provider {
+    public let provided: Providable
+
+    public enum Error: Swift.Error {
+        case noMySQLConfig
+        case missingConfig(String)
+    }
+
     /**
         MySQL database driver created by the provider.
     */
     public let driver: MySQLDriver
 
     /**
-        MySQL database created by the provider.
+        Creates a MySQL provider from a `mysql.json`
+        config file.
+     
+        The file should contain similar JSON:
+        
+            {
+                "host": "127.0.0.1",
+                "user": "root",
+                "password": "",
+                "database": "test",
+                "port": 3306, // optional
+                "flag": 0 // optional
+            }
     */
-    public let database: DatabaseDriver?
+    public convenience init(config: Config) throws {
+        guard let mysql = config["mysql"].object else {
+            throw Error.noMySQLConfig
+        }
+
+        guard let host = mysql["host"].string else {
+            throw Error.missingConfig("host")
+        }
+
+        guard let user = mysql["user"].string else {
+            throw Error.missingConfig("user")
+        }
+
+        guard let password = mysql["password"].string else {
+            throw Error.missingConfig("password")
+        }
+
+        guard let database = mysql["database"].string else {
+            throw Error.missingConfig("database")
+        }
+
+        let port = mysql["port"]?.uint
+        let flag = mysql["flag"]?.uint
+
+        try self.init(host: host, user: user, password: password, database: database, port: port, flag: flag)
+    }
 
     /**
         Attempts to establish a connection to a MySQL database
@@ -40,21 +85,38 @@ public final class Provider: Vapor.Provider {
         user: String,
         password: String,
         database: String,
-        port: UInt = 3306,
-        flag: UInt = 0
+        port: UInt? = nil,
+        flag: UInt? = nil
     ) throws {
         let driver = try MySQLDriver(
             host: host,
             user: user,
             password: password,
             database: database,
-            port: port,
-            flag: flag
+            port: port ?? 3306,
+            flag: flag ?? 0
         )
 
         self.driver = driver
-        self.database = driver
+
+        let db = Database(driver)
+        provided = Providable(database: db)
     }
 
-    public func boot(with drop: Droplet) { }
+    /**
+        Called after the Droplet has completed
+        initialization and all provided items
+        have been accepted.
+    */
+    public func afterInit(_ drop: Droplet) {
+
+    }
+
+    /**
+        Called before the Droplet begins serving
+        which is @noreturn.
+    */
+    public func beforeServe(_ drop: Droplet) {
+
+    }
 }

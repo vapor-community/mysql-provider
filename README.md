@@ -12,4 +12,4 @@ let drop = Droplet(providers: [VaporMySQL.Provider.self])
 
 ## Install and link MySQL
 
-Follow the instructions at [qutheory/mysql](https://github.com/qutheory/mysql) to properly install and link MySQL.
+Follow the instructions at [vapor/mysql](https://github.com/vapor/mysql) to properly install and link MySQL.

@@ -29,7 +29,8 @@ public final class Provider: Vapor.Provider {
                 "password": "",
                 "database": "test",
                 "port": 3306, // optional
-                "flag": 0 // optional
+                "flag": 0, // optional
+                "encoding": "utf8" // optional
             }
     */
     public convenience init(config: Config) throws {
@@ -55,8 +56,20 @@ public final class Provider: Vapor.Provider {
 
         let port = mysql["port"]?.uint
         let flag = mysql["flag"]?.uint
+        
+        guard let encoding = mysql["encoding"].string else {
+            throw Error.missingConfig("encoding")
+        }
 
-        try self.init(host: host, user: user, password: password, database: database, port: port, flag: flag)
+        try self.init(
+            host: host,
+            user: user,
+            password: password,
+            database: database,
+            port: port,
+            flag: flag,
+            encoding: encoding
+        )
     }
 
     /**
@@ -75,6 +88,9 @@ public final class Provider: Vapor.Provider {
         the string specifies the socket or named pipe to use.
         - parameter flag: Usually 0, but can be set to a combination of the
         flags at http://dev.mysql.com/doc/refman/5.7/en/mysql-real-connect.html
+         - parameter encoding: Usually "utf8", but something like "utf8mb4" may be
+             used, since "utf8" does not fully implement the UTF8 standard and does
+             not support Unicode.
 
 
         - throws: `Error.connection(String)` if the call to
@@ -86,7 +102,8 @@ public final class Provider: Vapor.Provider {
         password: String,
         database: String,
         port: UInt? = nil,
-        flag: UInt? = nil
+        flag: UInt? = nil,
+        encoding: String? = nil
     ) throws {
         let driver = try MySQLDriver(
             host: host,
@@ -94,7 +111,8 @@ public final class Provider: Vapor.Provider {
             password: password,
             database: database,
             port: port ?? 3306,
-            flag: flag ?? 0
+            flag: flag ?? 0,
+            encoding: encoding ?? "utf8"
         )
 
         self.driver = driver

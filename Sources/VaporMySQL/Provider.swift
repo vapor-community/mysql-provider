@@ -56,10 +56,7 @@ public final class Provider: Vapor.Provider {
 
         let port = mysql["port"]?.uint
         let flag = mysql["flag"]?.uint
-        
-        guard let encoding = mysql["encoding"].string else {
-            throw Error.missingConfig("encoding")
-        }
+        let encoding = mysql["encoding"]?.string
 
         try self.init(
             host: host,

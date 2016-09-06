@@ -34,30 +34,30 @@ public final class Provider: Vapor.Provider {
             }
     */
     public convenience init(config: Config) throws {
-        guard let mysql = config["mysql"].object else {
+        guard let mysql = config["mysql"]?.object else {
             throw Error.noMySQLConfig
         }
 
-        guard let host = mysql["host"].string else {
+        guard let host = mysql["host"]?.string else {
             throw Error.missingConfig("host")
         }
 
-        guard let user = mysql["user"].string else {
+        guard let user = mysql["user"]?.string else {
             throw Error.missingConfig("user")
         }
 
-        guard let password = mysql["password"].string else {
+        guard let password = mysql["password"]?.string else {
             throw Error.missingConfig("password")
         }
 
-        guard let database = mysql["database"].string else {
+        guard let database = mysql["database"]?.string else {
             throw Error.missingConfig("database")
         }
 
         let port = mysql["port"]?.uint
         let flag = mysql["flag"]?.uint
         
-        guard let encoding = mysql["encoding"].string else {
+        guard let encoding = mysql["encoding"]?.string else {
             throw Error.missingConfig("encoding")
         }
 

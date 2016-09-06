@@ -1,7 +1,7 @@
 #if os(Linux)
 
 import XCTest
-@testable import VaporMySQLTestSuite
+@testable import VaporMySQLTests
 
 XCTMain([
     testCase(VaporMySQL.allTests),

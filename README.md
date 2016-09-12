@@ -12,9 +12,7 @@ let drop = Droplet(providers: [VaporMySQL.Provider.self])
 
 ## Config
 
-MySQL Config
-
-To build, the first place you'll want to look is the Config/ directory. In their, you should create a secrets folder and a nested mysql.json. Here's how my Config/ folder looks locally.
+To build, the first place you'll want to look is the Config/ directory. In their, you should create a secrets folder and a nested `mysql.json`.
 
 ```
 Config/
@@ -27,7 +25,7 @@ The secrets folder is under the gitignore and shouldn't be committed.
 
 Here's an example `secrets/mysql.json`
 
-```
+```json
 {
   "host": "z99a0.asdf8c8cx.us-east-1.rds.amazonaws.com",
   "user": "username",
@@ -40,7 +38,7 @@ Here's an example `secrets/mysql.json`
 
 You can also just set a url.
 
-```
+```json
 {
     "url": "username:password@123.mysql.host.io"
 }

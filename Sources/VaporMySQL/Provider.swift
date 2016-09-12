@@ -1,3 +1,4 @@
+import URI
 import Vapor
 import Fluent
 import FluentMySQL
@@ -32,41 +33,73 @@ public final class Provider: Vapor.Provider {
                 "flag": 0, // optional
                 "encoding": "utf8" // optional
             }
+     
+        Optionally include a url instead:
+     
+            { 
+                "url": "mysql://user:pass@host:3306/database"
+            }
+
     */
     public convenience init(config: Config) throws {
         guard let mysql = config["mysql"]?.object else {
             throw Error.noMySQLConfig
         }
 
-        guard let host = mysql["host"]?.string else {
-            throw Error.missingConfig("host")
-        }
-
-        guard let user = mysql["user"]?.string else {
-            throw Error.missingConfig("user")
-        }
-
-        guard let password = mysql["password"]?.string else {
-            throw Error.missingConfig("password")
-        }
-
-        guard let database = mysql["database"]?.string else {
-            throw Error.missingConfig("database")
-        }
-
-        let port = mysql["port"]?.uint
         let flag = mysql["flag"]?.uint
-        
-        guard let encoding = mysql["encoding"]?.string else {
-            throw Error.missingConfig("encoding")
+        let encoding = mysql["encoding"]?.string
+
+        if let url = mysql["url"]?.string {
+            try self.init(url: url, flag: flag, encoding: encoding)
+        } else {
+            guard let host = mysql["host"]?.string else {
+                throw Error.missingConfig("host")
+            }
+
+            guard let user = mysql["user"]?.string else {
+                throw Error.missingConfig("user")
+            }
+
+            guard let password = mysql["password"]?.string else {
+                throw Error.missingConfig("password")
+            }
+
+            guard let database = mysql["database"]?.string else {
+                throw Error.missingConfig("database")
+            }
+
+            let port = mysql["port"]?.uint
+
+            try self.init(
+                host: host,
+                user: user,
+                password: password,
+                database: database,
+                port: port,
+                flag: flag,
+                encoding: encoding
+            )
         }
+    }
+
+    public convenience init(url: String, flag: UInt?, encoding: String?) throws {
+        let uri = try URI(url)
+        guard
+            let user = uri.userInfo?.username,
+            let pass = uri.userInfo?.info else { throw Error.missingConfig("UserInfo") }
+
+        let db = uri.path
+            .characters
+            .split(separator: "/")
+            .map { String($0) }
+            .joined(separator: "")
 
         try self.init(
-            host: host,
+            host: uri.host,
             user: user,
-            password: password,
-            database: database,
-            port: port,
+            password: pass,
+            database: db,
+            port: uri.port.flatMap { UInt($0) },
             flag: flag,
             encoding: encoding
         )

@@ -167,7 +167,7 @@ public final class Provider: Vapor.Provider {
         Called before the Droplet begins serving
         which is @noreturn.
     */
-    public func beforeServe(_ drop: Droplet) {
+    public func beforeRun(_ drop: Droplet) {
 
     }
 }

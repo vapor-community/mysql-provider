@@ -6,7 +6,6 @@ import FluentMySQL
 public typealias MySQLDriver = FluentMySQL.MySQLDriver
 
 public final class Provider: Vapor.Provider {
-    public let provided: Providable
 
     public enum Error: Swift.Error {
         case noMySQLConfig
@@ -17,6 +16,13 @@ public final class Provider: Vapor.Provider {
         MySQL database driver created by the provider.
     */
     public let driver: MySQLDriver
+
+    public var provided: Providable {
+        print("[DEPRECATED] `provided` is deprecated and will not be available in future versions.")
+        return Providable(database: database)
+    }
+
+    private let database: Database
 
     /**
         Creates a MySQL provider from a `mysql.json`
@@ -149,9 +155,14 @@ public final class Provider: Vapor.Provider {
         )
 
         self.driver = driver
+        self.database = Database(driver)
+    }
 
-        let db = Database(driver)
-        provided = Providable(database: db)
+    public func boot(_ drop: Droplet) {
+        if let existing = drop.database {
+            print("VaporMySQL will overwrite existing database: \(type(of: existing))")
+        }
+        drop.database = database
     }
 
     /**

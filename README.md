@@ -7,7 +7,8 @@ Adds MySQL support to the Vapor web framework.
 import Vapor
 import VaporMySQL
 
-let drop = Droplet(providers: [VaporMySQL.Provider.self])
+let drop = Droplet()
+try drop.addProvider(VaporMySQL.Provider.self)
 ```
 
 ## Config

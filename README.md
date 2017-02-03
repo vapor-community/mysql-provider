@@ -2,6 +2,14 @@
 
 Adds MySQL support to the Vapor web framework.
 
+## Add the dependency to Package.swift
+
+```JSON
+.Package(url: "https://github.com/vapor/mysql-provider.git", majorVersion: 1, minor: 0)
+
+```
+
+## Add the provider to your Droplet instance
 
 ```swift
 import Vapor

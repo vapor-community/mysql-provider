@@ -4,6 +4,6 @@ let package = Package(
     name: "VaporMySQL",
     dependencies: [
    		.Package(url: "https://github.com/vapor/mysql-driver.git", majorVersion: 1),
-   		.Package(url: "https://github.com/vapor/vapor.git", versions: Version(1,1,0)..<Version(2,0,0)),
+   		.Package(url: "https://github.com/vapor/vapor.git", Version(2,0,0, prereleaseIdentifiers: ["alpha"])),
     ]
 )

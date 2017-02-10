@@ -3,53 +3,41 @@ import Vapor
 import Fluent
 import FluentMySQL
 
-public typealias MySQLDriver = FluentMySQL.MySQLDriver
-
 public final class Provider: Vapor.Provider {
-
-    public enum Error: Swift.Error {
-        case noMySQLConfig
-        case missingConfig(String)
-    }
-
-    /**
-        MySQL database driver created by the provider.
-    */
+    /// MySQL database driver created by the provider.
     public let driver: MySQLDriver
 
-    public var provided: Providable {
-        print("[DEPRECATED] `provided` is deprecated and will not be available in future versions.")
-        return Providable(database: database)
-    }
-
+    /// Hold onto database until provider.boot is called.
     private let database: Database
 
-    /**
-        Creates a MySQL provider from a `mysql.json`
-        config file.
-     
-        The file should contain similar JSON:
-        
-            {
-                "host": "127.0.0.1",
-                "user": "root",
-                "password": "",
-                "database": "test",
-                "port": 3306, // optional
-                "flag": 0, // optional
-                "encoding": "utf8" // optional
-            }
-     
-        Optionally include a url instead:
-     
-            { 
-                "url": "mysql://user:pass@host:3306/database"
-            }
-
-    */
+    /// Creates a MySQL provider from a `mysql.json`
+    /// config file.
+    ///
+    /// The file should contain similar JSON:
+    ///
+    ///     {
+    ///         "host": "127.0.0.1",
+    ///         "user": "root",
+    ///         "password": "",
+    ///         "database": "test",
+    ///         "port": 3306, // optional
+    ///         "flag": 0, // optional
+    ///         "encoding": "utf8" // optional
+    ///     }
+    ///
+    /// Optionally include a url instead:
+    ///
+    ///     {
+    ///         "url": "mysql://user:pass@host:3306/database"
+    ///     }
     public convenience init(config: Config) throws {
         guard let mysql = config["mysql"]?.object else {
-            throw Error.noMySQLConfig
+            // remove this once `missing(file: String)` case is
+            // added to ConfigError
+            struct NoMySQLConfig: Error, CustomStringConvertible {
+                var description: String { return "No `mysql.json` config file found" }
+            }
+            throw  ConfigError.unspecified(NoMySQLConfig())
         }
 
         let flag = mysql["flag"]?.uint
@@ -59,19 +47,19 @@ public final class Provider: Vapor.Provider {
             try self.init(url: url, flag: flag, encoding: encoding)
         } else {
             guard let host = mysql["host"]?.string else {
-                throw Error.missingConfig("host")
+                throw ConfigError.missing(key: ["host"], file: "mysql", desiredType: String.self)
             }
 
             guard let user = mysql["user"]?.string else {
-                throw Error.missingConfig("user")
+                throw ConfigError.missing(key: ["user"], file: "mysql", desiredType: String.self)
             }
 
             guard let password = mysql["password"]?.string else {
-                throw Error.missingConfig("password")
+                throw ConfigError.missing(key: ["password"], file: "mysql", desiredType: String.self)
             }
 
             guard let database = mysql["database"]?.string else {
-                throw Error.missingConfig("database")
+                throw ConfigError.missing(key: ["database"], file: "mysql", desiredType: String.self)
             }
 
             let port = mysql["port"]?.uint
@@ -88,11 +76,15 @@ public final class Provider: Vapor.Provider {
         }
     }
 
+    /// See Provider.init(host: String, ...)
     public convenience init(url: String, flag: UInt?, encoding: String?) throws {
         let uri = try URI(url)
         guard
             let user = uri.userInfo?.username,
-            let pass = uri.userInfo?.info else { throw Error.missingConfig("UserInfo") }
+            let pass = uri.userInfo?.info
+        else {
+            throw ConfigError.missing(key: ["url(userInfo)"], file: "mysql", desiredType: URI.self)
+        }
 
         let db = uri.path
             .characters
@@ -111,30 +103,27 @@ public final class Provider: Vapor.Provider {
         )
     }
 
-    /**
-        Attempts to establish a connection to a MySQL database
-        engine running on host.
-
-        - parameter host: May be either a host name or an IP address.
-        If host is the string "localhost", a connection to the local host is assumed.
-        - parameter user: The user's MySQL login ID.
-        - parameter password: Password for user.
-        - parameter database: Database name.
-        The connection sets the default database to this value.
-        - parameter port: If port is not 0, the value is used as
-        the port number for the TCP/IP connection.
-        - parameter socket: If socket is not NULL,
-        the string specifies the socket or named pipe to use.
-        - parameter flag: Usually 0, but can be set to a combination of the
-        flags at http://dev.mysql.com/doc/refman/5.7/en/mysql-real-connect.html
-         - parameter encoding: Usually "utf8", but something like "utf8mb4" may be
-             used, since "utf8" does not fully implement the UTF8 standard and does
-             not support Unicode.
-
-
-        - throws: `Error.connection(String)` if the call to
-        `mysql_real_connect()` fails.
-    */
+    /// Attempts to establish a connection to a MySQL database
+    /// engine running on host.
+    ///
+    /// - parameter host: May be either a host name or an IP address.
+    ///         If host is the string "localhost", a connection to the local host is assumed.
+    /// - parameter user: The user's MySQL login ID.
+    /// - parameter password: Password for user.
+    /// - parameter database: Database name.
+    ///         The connection sets the default database to this value.
+    /// - parameter port: If port is not 0, the value is used as
+    ///         the port number for the TCP/IP connection.
+    /// - parameter socket: If socket is not NULL,
+    ///         the string specifies the socket or named pipe to use.
+    /// - parameter flag: Usually 0, but can be set to a combination of the
+    ///         flags at http://dev.mysql.com/doc/refman/5.7/en/mysql-real-connect.html
+    /// - parameter encoding: Usually "utf8", but something like "utf8mb4" may be
+    ///         used, since "utf8" does not fully implement the UTF8 standard and does
+    ///         not support Unicode.
+    ///
+    /// - throws: `Error.connection(String)` if the call to
+    ///         `mysql_real_connect()` fails.
     public init(
         host: String,
         user: String,
@@ -158,26 +147,20 @@ public final class Provider: Vapor.Provider {
         self.database = Database(driver)
     }
 
+    /// See Vapor.Provider.boot
     public func boot(_ drop: Droplet) {
         if let existing = drop.database {
-            print("VaporMySQL will overwrite existing database: \(type(of: existing))")
+            drop.log.debug("VaporMySQL overriding existing database: \(type(of: existing))")
         }
         drop.database = database
     }
 
-    /**
-        Called after the Droplet has completed
-        initialization and all provided items
-        have been accepted.
-    */
+    /// See Vapor.Provider.afterInit
     public func afterInit(_ drop: Droplet) {
 
     }
 
-    /**
-        Called before the Droplet begins serving
-        which is @noreturn.
-    */
+    /// See Vapor.Provider.beforeRun
     public func beforeRun(_ drop: Droplet) {
 
     }

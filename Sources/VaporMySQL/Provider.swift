@@ -2,6 +2,7 @@ import URI
 import Vapor
 import Fluent
 import FluentMySQL
+import FluentVapor
 
 public final class Provider: Vapor.Provider {
     /// MySQL database driver created by the provider.

@@ -26,12 +26,7 @@ extension MySQLDriver: ConfigInitializable {
     ///     }
     public convenience init(config: Config) throws {
         guard let mysql = config["mysql"]?.object else {
-            // remove this once `missing(file: String)` case is
-            // added to ConfigError
-            struct NoMySQLConfig: Error, CustomStringConvertible {
-                var description: String { return "No `mysql.json` config file found" }
-            }
-            throw  ConfigError.unspecified(NoMySQLConfig())
+            throw ConfigError.missingFile("mysql")
         }
 
         let flag = mysql["flag"]?.uint

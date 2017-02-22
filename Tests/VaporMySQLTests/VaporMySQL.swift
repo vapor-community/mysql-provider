@@ -56,8 +56,14 @@ class VaporMySQL: XCTestCase {
         let drop = Droplet(config: config)
         XCTAssert(drop.database == nil)
 
-        try drop.addProvider(Provider.self)
-        XCTAssert(drop.database == nil)
+        do {
+            try drop.addProvider(Provider.self)
+            XCTFail("Should have failed.")
+        } catch ConfigError.missingFile(let file) {
+            XCTAssert(file == "mysql")
+        } catch {
+            XCTFail("Wrong error: \(error)")
+        }
     }
 
     static let allTests = [

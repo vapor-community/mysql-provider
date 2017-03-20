@@ -94,7 +94,7 @@ public final class Provider: Vapor.Provider {
             .joined(separator: "")
 
         try self.init(
-            host: uri.host,
+            host: uri.hostname,
             user: user,
             password: pass,
             database: db,

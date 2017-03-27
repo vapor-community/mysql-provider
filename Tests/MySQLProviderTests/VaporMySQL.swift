@@ -1,6 +1,6 @@
 import XCTest
 import Vapor
-@testable import VaporMySQL
+@testable import MySQLProvider
 
 class VaporMySQL: XCTestCase {
     func testHappyPath() throws {
@@ -11,12 +11,12 @@ class VaporMySQL: XCTestCase {
             ],
             "mysql": [
                 "host": "127.0.0.1",
-                "user": "root",
+                "user": "ubuntu",
                 "password": "",
-                "database": "test"
+                "database": "circle_test"
             ]
         ])
-        let drop = Droplet(config: config)
+        let drop = try Droplet(config: config)
         XCTAssert(drop.database == nil)
 
         try drop.addProvider(Provider.self)
@@ -38,7 +38,7 @@ class VaporMySQL: XCTestCase {
                 "driver": "memory"
             ]
         ])
-        let drop = Droplet(config: config)
+        let drop = try Droplet(config: config)
         XCTAssert(drop.database == nil)
 
         // we're still adding the VaporMySQL provider,
@@ -53,7 +53,7 @@ class VaporMySQL: XCTestCase {
                 "driver": "mysql"
             ]
         ])
-        let drop = Droplet(config: config)
+        let drop = try Droplet(config: config)
         XCTAssert(drop.database == nil)
 
         do {

@@ -1,12 +1,15 @@
 # MySQL Provider for Vapor
 
+[![Swift](http://img.shields.io/badge/swift-3.1-brightgreen.svg)](https://swift.org)
+[![CircleCI](https://circleci.com/gh/vapor/mysql-provider.svg?style=shield)](https://circleci.com/gh/vapor/mysql-provider)
+[![Slack Status](http://vapor.team/badge.svg)](http://vapor.team)
+
 Adds MySQL support to the Vapor web framework.
 
 ## Add the dependency to Package.swift
 
 ```JSON
-.Package(url: "https://github.com/vapor/mysql-provider.git", majorVersion: 1, minor: 0)
-
+.Package(url: "https://github.com/vapor/mysql-provider.git", majorVersion: 2)
 ```
 
 ## Add the provider to your Droplet instance

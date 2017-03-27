@@ -1,7 +1,7 @@
 import URI
 import Vapor
 import Fluent
-import FluentMySQL
+import MySQLDriver
 
 extension MySQLDriver: ConfigInitializable {
     /// Creates a MySQLDriver from a `mysql.json`
@@ -82,7 +82,7 @@ extension MySQLDriver: ConfigInitializable {
             .joined(separator: "")
 
         try self.init(
-            host: uri.host,
+            host: uri.hostname,
             user: user,
             password: pass,
             database: db,

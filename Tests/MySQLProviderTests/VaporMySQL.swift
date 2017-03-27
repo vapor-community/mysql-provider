@@ -1,5 +1,5 @@
 import XCTest
-@testable import VaporMySQL
+@testable import MySQLProvider
 
 class VaporMySQL: XCTestCase {
     static let allTests = [

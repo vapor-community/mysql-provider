@@ -5,8 +5,10 @@ public final class Provider: Vapor.Provider {
 
     /// See Vapor.Provider.boot
     public func boot(_ drop: Droplet) throws {
-        try drop.addProvider(FluentProvider.Provider.self)
         try drop.addConfigurable(driver: MySQLDriver.self, name: "mysql")
+        // add configurable mysql first since fluent provider
+        // might use it for fluent cache
+        try drop.addProvider(FluentProvider.Provider.self)
     }
 
     /// See Vapor.Provider.beforeRun

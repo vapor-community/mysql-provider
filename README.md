@@ -1,5 +1,5 @@
-<center>
-    <img src="https://cloud.githubusercontent.com/assets/1342803/24603674/0f588712-1862-11e7-9056-0945f27d62be.png" alt="MySQL Provider">
+<p align="center">
+    <img src="https://cloud.githubusercontent.com/assets/1342803/24603674/0f588712-1862-11e7-9056-0945f27d62be.png" width="320" alt="MySQL Provider">
     <br>
     <a href="https://swift.org" target="_blank">
         <img src="http://img.shields.io/badge/swift-3.1-92A8D1.svg" alt="Swift 3.1">

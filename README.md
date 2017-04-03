@@ -3,19 +3,18 @@
     <br>
     <br>
     <a href="http://beta.docs.vapor.codes/mysql/package/" target="_blank">
-        <img src="http://img.shields.io/badge/documentation-here-F7CAC9.svg" alt="Documentation">
+        <img src="http://img.shields.io/badge/read_the-docs-92A8D1.svg" alt="Documentation">
     </a>
     <a href="http://vapor.team" target="_blank">
-        <img src="http://img.shields.io/badge/join-chat-D9C0CB.svg" alt="MIT License">
+        <img src="http://vapor.team/badge.svg" alt="Slack Team">
     </a>
     <a href="LICENSE" target="_blank">
-        <img src="http://img.shields.io/badge/license-MIT-C5B9CD.svg" alt="MIT License">
+        <img src="http://img.shields.io/badge/license-MIT-brightgreen.svg" alt="MIT License">
     </a>
     <a href="https://circleci.com/gh/vapor/mysql-provider" target="_blank">
-        <img src="http://img.shields.io/badge/ci-tested-B0B1CE.svg" alt="Continuous Integration">
+        <img src="https://circleci.com/gh/vapor/mysql-provider.svg?style=shield" alt="Continuous Integration">
     </a>
     <a href="https://swift.org" target="_blank">
-        <img src="http://img.shields.io/badge/swift-3.1-92A8D1.svg" alt="Swift 3.1">
+        <img src="http://img.shields.io/badge/swift-3.1-brightgreen.svg" alt="Swift 3.1">
     </a>
-
 </center>

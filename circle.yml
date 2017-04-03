@@ -4,9 +4,9 @@ machine:
 dependencies:
   override:
     - eval "$(curl -sL https://apt.vapor.sh)"
-    - apt-get install swift cmysql
+    - sudo apt-get install swift cmysql
 test:
   override:
-    - swift build
-    - swift build -c release
-    - swift test
+    - sudo swift build
+    - sudo swift build -c release
+    - sudo swift test

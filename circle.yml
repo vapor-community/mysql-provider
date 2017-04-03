@@ -4,8 +4,7 @@ machine:
 dependencies:
   override:
     - eval "$(curl -sL https://apt.vapor.sh)"
-    - sudo apt-get update
-    - sudo apt-get install vapor cmysql
+    - apt-get install swift cmysql
 test:
   override:
     - swift build

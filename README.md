@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1342803/24652812/8389c778-1933-11e7-9069-6a44068fc844.png" width="320" alt="MySQL Provider">
+    <img src="https://cloud.githubusercontent.com/assets/1342803/24657406/620fc95e-1946-11e7-90c3-3fa6b0b6207d.png" width="320" alt="MySQL Provider">
     <br>
     <br>
     <a href="http://beta.docs.vapor.codes/mysql/package/">

@@ -3,7 +3,7 @@ import Vapor
 import Fluent
 import MySQLDriver
 
-extension MySQLDriver: ConfigInitializable {
+extension MySQLDriver.Driver: ConfigInitializable {
     /// Creates a MySQLDriver from a `mysql.json`
     /// config file.
     ///
@@ -35,10 +35,17 @@ extension MySQLDriver: ConfigInitializable {
         if let url = mysql["url"]?.string {
             try self.init(url: url, flag: flag, encoding: encoding)
         } else {
-            guard let host = mysql["host"]?.string else {
-                throw ConfigError.missing(key: ["host"], file: "mysql", desiredType: String.self)
+            let masterHostname: String
+            if let master = mysql["master"]?.string {
+                masterHostname = master
+            } else if let master = mysql["hostname"]?.string {
+                masterHostname = master
+            } else {
+                throw ConfigError.missing(key: ["master/hostname"], file: "mysql", desiredType: String.self)
             }
-
+            
+            let readReplicaHostnames = mysql["readReplicas"]?.array?.flatMap({ $0.string }) ?? []
+            
             guard let user = mysql["user"]?.string else {
                 throw ConfigError.missing(key: ["user"], file: "mysql", desiredType: String.self)
             }
@@ -54,7 +61,8 @@ extension MySQLDriver: ConfigInitializable {
             let port = mysql["port"]?.uint
 
             try self.init(
-                host: host,
+                masterHostname: masterHostname,
+                readReplicaHostnames: readReplicaHostnames,
                 user: user,
                 password: password,
                 database: database,
@@ -82,7 +90,8 @@ extension MySQLDriver: ConfigInitializable {
             .joined(separator: "")
 
         try self.init(
-            host: uri.hostname,
+            masterHostname: uri.hostname,
+            readReplicaHostnames: [],
             user: user,
             password: pass,
             database: db,

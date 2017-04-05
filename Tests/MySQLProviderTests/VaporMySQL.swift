@@ -10,7 +10,7 @@ class VaporMySQL: XCTestCase {
                 "maxConnections": 1337
             ],
             "mysql": [
-                "host": "127.0.0.1",
+                "hostname": "127.0.0.1",
                 "user": "ubuntu",
                 "password": "",
                 "database": "circle_test"

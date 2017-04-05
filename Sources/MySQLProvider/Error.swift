@@ -1,6 +1,6 @@
 public enum MySQLProviderError: Error {
     case noDatabase
-    case invalidFluentDriver(Driver)
+    case invalidFluentDriver(Fluent.Driver)
     case unspecified(Error)
 }
 

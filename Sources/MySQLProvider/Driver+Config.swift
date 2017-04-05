@@ -44,7 +44,14 @@ extension MySQLDriver.Driver: ConfigInitializable {
                 throw ConfigError.missing(key: ["master/hostname"], file: "mysql", desiredType: String.self)
             }
             
-            let readReplicaHostnames = mysql["readReplicas"]?.array?.flatMap({ $0.string }) ?? []
+            let readReplicaHostnames: [String]
+            if let array = mysql["readReplicas"]?.array?.flatMap({ $0.string }) {
+                readReplicaHostnames = array
+            } else if let string = mysql["readReplicas"]?.string {
+                readReplicaHostnames = string.commaSeparatedArray()
+            } else {
+                readReplicaHostnames = []
+            }
             
             guard let user = mysql["user"]?.string else {
                 throw ConfigError.missing(key: ["user"], file: "mysql", desiredType: String.self)

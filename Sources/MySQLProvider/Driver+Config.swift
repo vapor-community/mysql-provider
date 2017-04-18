@@ -41,7 +41,7 @@ extension MySQLDriver.Driver: ConfigInitializable {
             } else if let master = mysql["hostname"]?.string {
                 masterHostname = master
             } else {
-                throw ConfigError.missing(key: ["master/hostname"], file: "mysql", desiredType: String.self)
+                throw ConfigError.missing(key: ["One of 'master', or 'hostname'"], file: "mysql", desiredType: String.self)
             }
             
             let readReplicaHostnames: [String]

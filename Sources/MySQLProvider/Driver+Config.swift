@@ -10,7 +10,7 @@ extension MySQLDriver.Driver: ConfigInitializable {
     /// The file should contain similar JSON:
     ///
     ///     {
-    ///         "host": "127.0.0.1",
+    ///         "hostname": "127.0.0.1",
     ///         "user": "root",
     ///         "password": "",
     ///         "database": "test",
@@ -36,12 +36,12 @@ extension MySQLDriver.Driver: ConfigInitializable {
             try self.init(url: url, flag: flag, encoding: encoding)
         } else {
             let masterHostname: String
-            if let master = mysql["master"]?.string {
+            if let master = mysql["hostname"]?.string {
                 masterHostname = master
-            } else if let master = mysql["hostname"]?.string {
+            } else if let master = mysql["master"]?.string {
                 masterHostname = master
             } else {
-                throw ConfigError.missing(key: ["One of 'master', or 'hostname'"], file: "mysql", desiredType: String.self)
+                throw ConfigError.missing(key: ["hostname"], file: "mysql", desiredType: String.self)
             }
             
             let readReplicaHostnames: [String]

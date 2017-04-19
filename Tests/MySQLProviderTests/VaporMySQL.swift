@@ -33,18 +33,15 @@ class VaporMySQL: XCTestCase {
     }
 
     func testDifferentDriver() throws {
-        let config = try Config(node: [
-            "fluent": [
-                "driver": "memory"
-            ]
-        ])
+        var config = Config([:])
+        try config.set("fluent.driver", "memory")
         let drop = try Droplet(config: config)
         XCTAssert(drop.database == nil)
 
         // we're still adding the VaporMySQL provider,
         // but nothing should fail since we are specifying "memory"
         try drop.addProvider(Provider.self)
-        XCTAssert(drop.database == nil)
+        XCTAssert(drop.database != nil)
     }
 
     func testMissingConfigFails() throws {

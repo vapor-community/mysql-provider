@@ -1,16 +1,18 @@
 import Vapor
 
 public final class Provider: Vapor.Provider {
+    public static let repositoryName = "mysql-provider"
+    
     public init(config: Config) throws { }
-
-    /// See Vapor.Provider.boot
-    public func boot(_ drop: Droplet) throws {
-        try drop.addConfigurable(driver: MySQLDriver.Driver.self, name: "mysql")
-        // add configurable mysql first since fluent provider
-        // might use it for fluent cache
-        try drop.addProvider(FluentProvider.Provider.self)
+    
+    
+    public func boot(_ config: Config) throws {
+        // add the fluent provider so the end user doesn't have to
+        try config.addProvider(FluentProvider.Provider.self)
+        // add the mysql driver
+        config.addConfigurable(driver: MySQLDriver.Driver.init, name: "mysql")
     }
 
-    /// See Vapor.Provider.beforeRun
+    public func boot(_ drop: Droplet) throws { }
     public func beforeRun(_ drop: Droplet) {}
 }

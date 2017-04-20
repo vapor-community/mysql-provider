@@ -1,5 +1,4 @@
 public enum MySQLProviderError: Error {
-    case noDatabase
     case invalidFluentDriver(Fluent.Driver)
     case unspecified(Error)
 }
@@ -7,8 +6,6 @@ public enum MySQLProviderError: Error {
 extension MySQLProviderError: Debuggable {
     public var reason: String {
         switch self {
-        case .noDatabase:
-            return "No database has been configured."
         case .invalidFluentDriver(let driver):
             return "Invalid Fluent driver: \(type(of: driver)). MySQL driver required."
         case .unspecified(let error):
@@ -18,8 +15,6 @@ extension MySQLProviderError: Debuggable {
     
     public var identifier: String {
         switch self {
-        case .noDatabase:
-            return "noDatabase"
         case .invalidFluentDriver:
             return "invalidFluentDriver"
         case .unspecified:
@@ -29,10 +24,6 @@ extension MySQLProviderError: Debuggable {
     
     public var possibleCauses: [String] {
         switch self {
-        case .noDatabase:
-            return [
-                "You have not added the `MySQLProvider.Provider` to your Droplet."
-            ]
         case .invalidFluentDriver:
             return [
                 "You have not added the `MySQLProvider.Provider` to your Droplet.",

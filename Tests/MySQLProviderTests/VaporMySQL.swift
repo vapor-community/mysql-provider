@@ -16,18 +16,13 @@ class VaporMySQL: XCTestCase {
                 "database": "circle_test"
             ]
         ])
-        let drop = try Droplet(config: config)
-        XCTAssert(drop.database == nil)
+        
+        try config.addProvider(Provider.self)
+        let drop = try Droplet(config)
+        let database = try drop.assertDatabase()
 
-        try drop.addProvider(Provider.self)
-        XCTAssert(drop.database != nil)
-
-        XCTAssertEqual(drop.database?.threadConnectionPool.maxConnections, 1337)
-
-        guard let result = try drop.database?.raw("SELECT @@version") else {
-            XCTFail("No result")
-            return
-        }
+        XCTAssertEqual(database.threadConnectionPool.maxConnections, 1337)
+        let result = try database.raw("SELECT @@version")
 
         XCTAssert(result[0, "@@version"]?.string?.contains("5.") == true)
     }
@@ -35,13 +30,12 @@ class VaporMySQL: XCTestCase {
     func testDifferentDriver() throws {
         var config = Config([:])
         try config.set("fluent.driver", "memory")
+        try config.addProvider(Provider.self)
         let drop = try Droplet(config: config)
-        XCTAssert(drop.database == nil)
-
+        
         // we're still adding the VaporMySQL provider,
         // but nothing should fail since we are specifying "memory"
-        try drop.addProvider(Provider.self)
-        XCTAssert(drop.database != nil)
+        _ = try drop.assertDatabase()
     }
 
     func testMissingConfigFails() throws {
@@ -50,11 +44,10 @@ class VaporMySQL: XCTestCase {
                 "driver": "mysql"
             ]
         ])
-        let drop = try Droplet(config: config)
-        XCTAssert(drop.database == nil)
+        try config.addProvider(Provider.self)
 
         do {
-            try drop.addProvider(Provider.self)
+            _ = try Droplet(config)
             XCTFail("Should have failed.")
         } catch ConfigError.missingFile(let file) {
             XCTAssert(file == "mysql")

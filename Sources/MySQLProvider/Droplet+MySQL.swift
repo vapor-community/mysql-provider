@@ -6,9 +6,7 @@ extension Droplet {
     /// This is a convenience for casting the 
     /// drop.database.driver as a MySQLDriver type.
     public func mysql() throws -> MySQLDriver.Driver {
-        guard let database = self.database else {
-            throw MySQLProviderError.noDatabase
-        }
+        let database = try assertDatabase()
         
         guard let driver = database.driver as? MySQLDriver.Driver else {
             throw MySQLProviderError.invalidFluentDriver(database.driver)

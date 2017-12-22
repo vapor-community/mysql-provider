@@ -11,9 +11,9 @@ class VaporMySQL: XCTestCase {
             ],
             "mysql": [
                 "hostname": "127.0.0.1",
-                "user": "ubuntu",
+                "user": "root",
                 "password": "",
-                "database": "circle_test"
+                "database": "test"
             ]
         ])
         
